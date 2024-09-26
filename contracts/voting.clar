@@ -66,3 +66,20 @@
     )
   )
 )
+
+(define-public (close-voting)
+  (begin
+    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_NOT_AUTHORIZED)
+    (var-set voting-open false)
+    (ok true)
+  )
+)
+
+(define-public (reopen-voting)
+  (begin
+    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_NOT_AUTHORIZED)
+    (var-set voting-open true)
+    (ok true)
+  )
+)
+
