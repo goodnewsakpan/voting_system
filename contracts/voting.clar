@@ -12,3 +12,27 @@
   uint
   {name: (string-utf8 50), vote-count: uint}
 )
+
+
+(define-read-only (get-vote-count (candidate-id uint))
+  (match (map-get? candidates candidate-id)
+    candidate (ok (get vote-count candidate))
+    (err u404) ;; Candidate not found
+  )
+)
+
+(define-read-only (get-total-votes)
+  (ok (var-get total-votes))
+)
+
+(define-read-only (has-voted (voter principal))
+  (is-some (map-get? votes voter))
+)
+
+(define-read-only (is-voting-open)
+  (ok (var-get voting-open))
+)
+
+(define-read-only (get-candidate (candidate-id uint))
+  (ok (map-get? candidates candidate-id))
+)
