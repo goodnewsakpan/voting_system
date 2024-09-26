@@ -44,3 +44,25 @@
     (ok (map-set candidates id {name: name, vote-count: u0}))
   )
 )
+
+(define-public (vote (candidate-id uint))
+  (let 
+    (
+      (voter tx-sender)
+    )
+    (asserts! (var-get voting-open) ERR_VOTING_CLOSED)
+    (asserts! (is-none (map-get? votes voter)) ERR_ALREADY_VOTED)
+    (match (map-get? candidates candidate-id)
+      candidate
+        (begin
+          (map-set votes voter candidate-id)
+          (map-set candidates candidate-id 
+            (merge candidate {vote-count: (+ (get vote-count candidate) u1)}))
+          )
+          (var-set total-votes (+ (var-get total-votes) u1))
+          (ok true)
+        )
+      ERR_INVALID_VOTE
+    )
+  )
+)
