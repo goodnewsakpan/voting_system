@@ -1,18 +1,24 @@
+;; Decentralized Voting System Smart Contract
+
+;; Define constants
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_NOT_AUTHORIZED (err u100))
 (define-constant ERR_ALREADY_VOTED (err u101))
 (define-constant ERR_INVALID_VOTE (err u102))
 (define-constant ERR_VOTING_CLOSED (err u103))
 
+;; Define data variables
 (define-data-var voting-open bool true)
 (define-data-var total-votes uint u0)
 
+;; Define data maps
 (define-map votes principal uint)
 (define-map candidates
   uint
   {name: (string-utf8 50), vote-count: uint}
 )
 
+;; Read-only functions
 
 (define-read-only (get-vote-count (candidate-id uint))
   (match (map-get? candidates candidate-id)
@@ -37,6 +43,7 @@
   (ok (map-get? candidates candidate-id))
 )
 
+;; Public functions
 
 (define-public (add-candidate (id uint) (name (string-utf8 50)))
   (begin
@@ -57,7 +64,7 @@
         (begin
           (map-set votes voter candidate-id)
           (map-set candidates candidate-id 
-            (merge candidate {vote-count: (+ (get vote-count candidate) u1)}))
+            (merge candidate {vote-count: (+ (get vote-count candidate) u1)})
           )
           (var-set total-votes (+ (var-get total-votes) u1))
           (ok true)
@@ -83,3 +90,9 @@
   )
 )
 
+;; Contract initialization
+(begin
+  (map-set candidates u1 {name: "Candidate 1", vote-count: u0})
+  (map-set candidates u2 {name: "Candidate 2", vote-count: u0})
+  (map-set candidates u3 {name: "Candidate 3", vote-count: u0})
+)
