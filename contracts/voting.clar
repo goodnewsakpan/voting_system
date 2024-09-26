@@ -36,3 +36,11 @@
 (define-read-only (get-candidate (candidate-id uint))
   (ok (map-get? candidates candidate-id))
 )
+
+
+(define-public (add-candidate (id uint) (name (string-utf8 50)))
+  (begin
+    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_NOT_AUTHORIZED)
+    (ok (map-set candidates id {name: name, vote-count: u0}))
+  )
+)
